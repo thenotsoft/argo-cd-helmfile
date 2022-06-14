@@ -57,24 +57,24 @@ fi
 SCRIPT_NAME=$(basename "${0}")
 
 # expand nested variables
-if [[ "${HELMFILE_GLOBAL_OPTIONS}" ]]; then
-  HELMFILE_GLOBAL_OPTIONS=$(variable_expansion "${HELMFILE_GLOBAL_OPTIONS}")
+if [[ "${ARGOCD_ENV_HELMFILE_GLOBAL_OPTIONS}" ]]; then
+  HELMFILE_GLOBAL_OPTIONS=$(variable_expansion "${ARGOCD_ENV_HELMFILE_GLOBAL_OPTIONS}")
 fi
 
-if [[ "${HELMFILE_TEMPLATE_OPTIONS}" ]]; then
-  HELMFILE_TEMPLATE_OPTIONS=$(variable_expansion "${HELMFILE_TEMPLATE_OPTIONS}")
+if [[ "${ARGOCD_ENV_HELMFILE_TEMPLATE_OPTIONS}" ]]; then
+  HELMFILE_TEMPLATE_OPTIONS=$(variable_expansion "${ARGOCD_ENV_HELMFILE_TEMPLATE_OPTIONS}")
 fi
 
-if [[ "${HELM_TEMPLATE_OPTIONS}" ]]; then
-  HELM_TEMPLATE_OPTIONS=$(variable_expansion "${HELM_TEMPLATE_OPTIONS}")
+if [[ "${ARGOCD_ENV_HELM_TEMPLATE_OPTIONS}" ]]; then
+  HELM_TEMPLATE_OPTIONS=$(variable_expansion "${ARGOCD_ENV_HELM_TEMPLATE_OPTIONS}")
 fi
 
-if [[ "${HELMFILE_INIT_SCRIPT_FILE}" ]]; then
-  HELMFILE_INIT_SCRIPT_FILE=$(variable_expansion "${HELMFILE_INIT_SCRIPT_FILE}")
+if [[ "${ARGOCD_ENV_HELMFILE_INIT_SCRIPT_FILE}" ]]; then
+  HELMFILE_INIT_SCRIPT_FILE=$(variable_expansion "${ARGOCD_ENV_HELMFILE_INIT_SCRIPT_FILE}")
 fi
 
-if [[ "${HELM_DATA_HOME}" ]]; then
-  export HELM_DATA_HOME=$(variable_expansion "${HELM_DATA_HOME}")
+if [[ "${ARGOCD_ENV_HELM_DATA_HOME}" ]]; then
+  export HELM_DATA_HOME=$(variable_expansion "${ARGOCD_ENV_HELM_DATA_HOME}")
 fi
 
 phase=$1
@@ -89,21 +89,21 @@ if [[ ! -d "/tmp/__${SCRIPT_NAME}__/bin" ]]; then
 fi
 
 # set binary paths and base options
-if [[ "${HELM_BINARY}" ]]; then
-  helm="${HELM_BINARY}"
+if [[ "${ARGOCD_ENV_HELM_BINARY}" ]]; then
+  helm="${ARGOCD_ENV_HELM_BINARY}"
 else
   helm="$(which helm)"
 fi
 
-if [[ "${HELMFILE_BINARY}" ]]; then
-  helmfile="${HELMFILE_BINARY}"
+if [[ "${ARGOCD_ENV_HELMFILE_BINARY}" ]]; then
+  helmfile="${ARGOCD_ENV_HELMFILE_BINARY}"
 else
   if [[ $(which helmfile) ]]; then
     helmfile="$(which helmfile)"
   else
     LOCAL_HELMFILE_BINARY="/tmp/__${SCRIPT_NAME}__/bin/helmfile"
     if [[ ! -x "${LOCAL_HELMFILE_BINARY}" ]]; then
-      wget -O "${LOCAL_HELMFILE_BINARY}" "https://github.com/roboll/helmfile/releases/download/v0.138.7/helmfile_linux_amd64"
+      wget -O "${LOCAL_HELMFILE_BINARY}" "https://github.com/roboll/helmfile/releases/download/v0.144.0/helmfile_linux_amd64"
       chmod +x "${LOCAL_HELMFILE_BINARY}"
     fi
     helmfile="${LOCAL_HELMFILE_BINARY}"
@@ -122,7 +122,7 @@ fi
 
 if [[ -v HELMFILE_HELMFILE ]]; then
   helmfile="${helmfile} -f ${HELMFILE_HELMFILE_HELMFILED}"
-  HELMFILE_HELMFILE_STRATEGY=${HELMFILE_HELMFILE_STRATEGY:=REPLACE}
+  HELMFILE_HELMFILE_STRATEGY=${ARGOCD_ENV_HELMFILE_HELMFILE_STRATEGY:=REPLACE}
 fi
 
 # these should work for both v2 and v3
